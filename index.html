@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RESET</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+background:#f4f5f7;
+color:#17191c
+}
+main{max-width:600px;margin:auto;padding:25px 15px 100px}
+h1{margin:0;font-size:30px}
+.sub{color:#777;font-size:14px;margin-bottom:20px}
+.card{
+background:white;
+border-radius:18px;
+padding:17px;
+margin-bottom:14px;
+box-shadow:0 2px 8px #0000000d
+}
+h2{font-size:17px;margin:0 0 12px}
+.mission{
+font-size:21px;
+font-weight:700;
+margin:8px 0
+}
+.muted{color:#777;font-size:13px}
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
+}
+.kpi{
+border:1px solid #eee;
+border-radius:14px;
+padding:13px
+}
+.kpi span{font-size:12px;color:#777}
+.kpi b{display:block;font-size:20px;margin-top:3px}
+label{display:block;font-size:13px;color:#666;margin:15px 0 6px}
+input,select,textarea{
+width:100%;
+font-size:16px;
+padding:12px;
+border:1px solid #ddd;
+border-radius:12px;
+background:white
+}
+textarea{height:70px}
+button{
+border:0;
+border-radius:13px;
+padding:13px;
+font-weight:700;
+font-size:15px
+}
+.primary{
+width:100%;
+background:#245cff;
+color:white;
+margin-top:18px
+}
+.choice{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:7px
+}
+.choice button{
+background:#eee;
+color:#222
+}
+.choice button.selected{
+background:#dfe7ff;
+color:#1643b7
+}
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+border-top:1px solid #ddd;
+padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+display:flex;
+justify-content:space-around
+}
+.nav button{
+background:none;
+color:#666
+}
+.nav .active{color:#245cff}
+.hidden{display:none}
+.row{
+display:flex;
+justify-content:space-between;
+padding:11px 0;
+border-bottom:1px solid #eee
+}
+.good{color:#16864b}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<h1>RESET</h1>
+<div class="sub">Pilote personnel · Corps · Discipline · Finance</div>
+
+<section id="home">
+
+<div class="card">
+<div class="muted">MISSION RECOMMANDÉE</div>
+<div class="mission" id="mission"></div>
+<div class="muted" id="reason"></div>
+</div>
+
+<div class="card">
+<h2>Cette semaine</h2>
+
+<div class="grid">
+
+<div class="kpi">
+<span>Corps</span>
+<b id="sportKpi">0 / 3</b>
+</div>
+
+<div class="kpi">
+<span>Exécution</span>
+<b id="execKpi">0 / 2</b>
+</div>
+
+<div class="kpi">
+<span>Pas moyens</span>
+<b id="stepsKpi">—</b>
+</div>
+
+<div class="kpi">
+<span>Alimentation</span>
+<b id="foodKpi">—</b>
+</div>
+
+<div class="kpi">
+<span>Réseaux</span>
+<b id="socialKpi">—</b>
+</div>
+
+<div class="kpi">
+<span>Fiabilité</span>
+<b id="scoreKpi">—</b>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<h2>Règles actuelles</h2>
+<div class="row"><span>Sport</span><b>3 / semaine</b></div>
+<div class="row"><span>Pas</span><b>7 500 / jour</b></div>
+<div class="row"><span>Exécution</span><b>2 × 25 min</b></div>
+<div class="row"><span>Réseaux passifs</span><b>≤ 60 min/j</b></div>
+<div class="row"><span>Poids</span><b>1 × semaine</b></div>
+</div>
+
+</section>
+
+
+<section id="check" class="hidden">
+
+<div class="card">
+<h2>Check du jour</h2>
+
+<label>Pas aujourd'hui</label>
+<input id="steps" type="number" placeholder="Ex : 7800">
+
+<label>Sport</label>
+<select id="sport">
+<option value="0">Pas de séance</option>
+<option value="1">Minimum · 10 min</option>
+<option value="1">Réduite · 20 min</option>
+<option value="1">Normale · 30-45 min</option>
+</select>
+
+<label>Alimentation</label>
+
+<div class="choice">
+<button onclick="food='A';selectFood(this)">A<br>Maîtrisée</button>
+<button onclick="food='B';selectFood(this)">B<br>Moyenne</button>
+<button onclick="food='C';selectFood(this)">C<br>Dérapage</button>
+</div>
+
+<label>Réseaux passifs aujourd'hui (minutes)</label>
+<input id="social" type="number" placeholder="Ex : 42">
+
+<label>Bloc maison / administratif 25 min</label>
+<select id="execution">
+<option value="0">Non</option>
+<option value="1">Oui</option>
+</select>
+
+<label>Fast-food / livraison (€)</label>
+<input id="fastfood" type="number" value="0">
+
+<label>Énergie aujourd'hui</label>
+<select id="energy">
+<option value="">—</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>Note rapide</label>
+<textarea id="note" placeholder="Journée longue, faim, sport facile..."></textarea>
+
+<button class="primary" onclick="saveDay()">VALIDER MA JOURNÉE</button>
+
+</div>
+
+<div class="card">
+<h2>Poids hebdomadaire</h2>
+<input id="weight" type="number" step=".1" placeholder="92.0">
+<button class="primary" onclick="saveWeight()">ENREGISTRER LE POIDS</button>
+</div>
+
+</section>
+
+
+<section id="progress" class="hidden">
+
+<div class="card">
+<h2>Progression</h2>
+<div id="progressData"></div>
+</div>
+
+<div class="card">
+<h2>Derniers jours</h2>
+<div id="history"></div>
+</div>
+
+</section>
+
+</main>
+
+
+<div class="nav">
+
+<button id="navHome" class="active" onclick="show('home')">
+Aujourd'hui
+</button>
+
+<button id="navCheck" onclick="show('check')">
+Check
+</button>
+
+<button id="navProgress" onclick="show('progress')">
+Progression
+</button>
+
+</div>
+
+
+<script>
+
+let data=JSON.parse(localStorage.getItem("resetData")||'{"days":{},"weights":[]}');
+
+let food="";
+
+function date(){
+return new Date().toISOString().slice(0,10)
+}
+
+function thisWeek(){
+
+let now=new Date();
+let day=now.getDay()||7;
+
+let monday=new Date(now);
+monday.setDate(now.getDate()-day+1);
+
+let result=[];
+
+for(let i=0;i<7;i++){
+
+let d=new Date(monday);
+d.setDate(monday.getDate()+i);
+
+result.push(d.toISOString().slice(0,10));
+
+}
+
+return result;
+
+}
+
+function stats(){
+
+let week=thisWeek();
+
+let days=week
+.map(x=>data.days[x])
+.filter(Boolean);
+
+let sport=days.filter(x=>x.sport==1).length;
+
+let exec=days.filter(x=>x.execution==1).length;
+
+let stepValues=days
+.map(x=>x.steps)
+.filter(x=>x>0);
+
+let avgSteps=stepValues.length
+?Math.round(stepValues.reduce((a,b)=>a+b,0)/stepValues.length)
+:0;
+
+let foods=days.filter(x=>x.food);
+
+let goodFood=foods.length
+?Math.round(100*foods.filter(x=>x.food!="C").length/foods.length)
+:null;
+
+let socials=days
+.map(x=>x.social)
+.filter(x=>x>=0);
+
+let avgSocial=socials.length
+?Math.round(socials.reduce((a,b)=>a+b,0)/socials.length)
+:null;
+
+let scores=days.map(x=>{
+
+let score=0;
+
+if(x.steps>=7500)score++;
+if(x.food=="A"||x.food=="B")score++;
+if(x.social<=60)score++;
+if(x.sport==1||x.execution==1)score++;
+
+return score/4*100;
+
+});
+
+let reliability=scores.length
+?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length)
+:null;
+
+return{
+sport,
+exec,
+avgSteps,
+goodFood,
+avgSocial,
+reliability
+};
+
+}
+
+function mission(){
+
+let s=stats();
+
+if(data.days[date()]){
+return[
+"Journée enregistrée",
+"Tu as fait ton check. Rien à rattraper artificiellement."
+]
+}
+
+if(s.sport<3){
+return[
+"Corps · séance recommandée",
+"Tu es à "+s.sport+"/3 cette semaine."
+]
+}
+
+if(s.exec<2){
+return[
+"Exécution · 25 minutes",
+"Choisis une chose que tu repousses et règle-la maintenant."
+]
+}
+
+if(s.avgSteps<7500){
+return[
+"Marche · 15 à 20 minutes",
+"Ta moyenne actuelle est de "+s.avgSteps+" pas."
+]
+}
+
+return[
+"Rien à rattraper",
+"Tes engagements principaux sont à jour."
+];
+
+}
+
+function render(){
+
+let s=stats();
+
+sportKpi.innerText=s.sport+" / 3";
+execKpi.innerText=s.exec+" / 2";
+
+stepsKpi.innerText=
+s.avgSteps?s.avgSteps.toLocaleString("fr-FR"):"—";
+
+foodKpi.innerText=
+s.goodFood===null?"—":s.goodFood+" %";
+
+socialKpi.innerText=
+s.avgSocial===null?"—":s.avgSocial+" min";
+
+scoreKpi.innerText=
+s.reliability===null?"—":s.reliability+" %";
+
+let m=mission();
+
+mission.innerText=m[0];
+reason.innerText=m[1];
+
+renderProgress();
+
+}
+
+function selectFood(button){
+
+document
+.querySelectorAll(".choice button")
+.forEach(x=>x.classList.remove("selected"));
+
+button.classList.add("selected");
+
+}
+
+function saveDay(){
+
+data.days[date()]={
+
+steps:+steps.value||0,
+
+sport:+sport.value,
+
+food:food,
+
+social:+social.value||0,
+
+execution:+execution.value,
+
+fastfood:+fastfood.value||0,
+
+energy:energy.value,
+
+note:note.value
+
+};
+
+localStorage.setItem(
+"resetData",
+JSON.stringify(data)
+);
+
+alert("Journée enregistrée");
+
+render();
+
+show("home");
+
+}
+
+function saveWeight(){
+
+if(!weight.value)return;
+
+data.weights.push({
+date:date(),
+weight:+weight.value
+});
+
+localStorage.setItem(
+"resetData",
+JSON.stringify(data)
+);
+
+weight.value="";
+
+render();
+
+alert("Poids enregistré");
+
+}
+
+function renderProgress(){
+
+let values=Object.entries(data.days);
+
+let fastfood=values.reduce(
+(a,[k,d])=>a+(d.fastfood||0),
+0
+);
+
+let first=data.weights[0];
+
+let last=data.weights[data.weights.length-1];
+
+progressData.innerHTML=
+
+'<div class="row"><span>Jours suivis</span><b>'+
+values.length+
+'</b></div>'+
+
+'<div class="row"><span>Fast-food / livraison</span><b>'+
+fastfood.toFixed(0)+
+' €</b></div>'+
+
+'<div class="row"><span>Poids initial</span><b>'+
+(first?first.weight+" kg":"—")+
+'</b></div>'+
+
+'<div class="row"><span>Dernier poids</span><b>'+
+(last?last.weight+" kg":"—")+
+'</b></div>';
+
+history.innerHTML=
+values
+.slice(-7)
+.reverse()
+.map(([k,d])=>
+
+'<div class="row"><span>'+
+new Date(k).toLocaleDateString("fr-FR")+
+'</span><b>'+
+(d.sport?"Sport · ":"")+
+(d.food||"—")+
+'</b></div>'
+
+).join("");
+
+}
+
+function show(screen){
+
+["home","check","progress"]
+.forEach(x=>
+document
+.getElementById(x)
+.classList.toggle("hidden",x!=screen)
+);
+
+["navHome","navCheck","navProgress"]
+.forEach(x=>
+document
+.getElementById(x)
+.classList.remove("active")
+);
+
+document.getElementById(
+"nav"+
+screen.charAt(0).toUpperCase()+
+screen.slice(1)
+).classList.add("active");
+
+window.scrollTo(0,0);
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
